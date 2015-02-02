@@ -1,0 +1,45 @@
+#!/bin/bash
+# Timelapse controller for Raspberry Pi
+
+IMAGEDIR=imagesCONTINUOUS
+DELAY=55
+ISUPLOAD=0
+while getopts “i:d:u:” OPTION
+do
+     case $OPTION in
+         i)
+             IMAGEDIR=$OPTARG
+             ;;
+         d)
+             DELAY=$OPTARG
+             ;;
+         u)
+             ISUPLOAD=$OPTARG
+             ;;	
+     esac
+done
+
+PROJECTDIR=/home/pi/techxtimelapse
+# IMAGEDIR=imagesCONTINUOUS
+# /home/pi/Dropbox-Uploader/dropbox_uploader.sh mkdir $IMAGEDIR
+# mkdir $PROJECTDIR/$IMAGEDIR
+
+# As of 13 Dec 2013,
+# -sh, -co, -sa range from -100 to 100. Default at 0
+# -br ranges from 0 to 100. Default at 50
+# -ev officially ranges from -10 to 10 with a default at 0. However when you push to -20 you still see results.
+# options for -ex: auto, night, nightpreview, backlight, spotlight, sports, snow, beach, verylong, fixedfps, antishake, fireworks
+# options for -awb: off, auto, sun, cloudshade, tungsten, fluorescent, incandescent, flash, horizon
+
+while true;
+do
+	filename=$(date +"%Y%m%d_%H%M-%S").jpg
+	# raspistill --width 1280 --height 960 --quality 100 --timeout 5000 --encoding jpg -sh 0 -co 0 -br 50 -sa 0 -ev 0 --exposure off --awb off --ISO 100 --ev 10 --metering matrix --nopreview --output $PROJECTDIR/$IMAGEDIR/$filename
+        raspistill --metering matrix --nopreview --output $PROJECTDIR/$IMAGEDIR/$filename
+	
+	if [ $ISUPLOAD = 1 ]; then
+		/home/pi/Dropbox-Uploader/dropbox_uploader.sh upload $PROJECTDIR/$IMAGEDIR/$filename $IMAGEDIR
+	fi
+
+	sleep $DELAY
+done
