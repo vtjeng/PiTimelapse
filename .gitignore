@@ -4,3 +4,10 @@
 
 ## Directory-based project format:
 .idea/
+/bin/
+/target/
+
+## 
+.classpath
+.project
+.settings/
