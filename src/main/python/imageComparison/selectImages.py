@@ -4,9 +4,10 @@ import cv2
 import os
 import itertools
 import cProfile
+import matplotlib.pyplot as plt
 
 workingDirectory = "D:\Timelapse Project\Suite Lounge III - Working Copy"
-sampleSize = 50
+sampleSize = 2000
 
 os.chdir(workingDirectory)
 
@@ -38,8 +39,10 @@ def calculate_diffs(fileList):
 
 # print(calculate_diffs(fileList))
 
-cProfile.run("calculate_diffs(fileList)")
-# benchmark times: 0.178 to import, 0.016 to calculate norms.
+diffs = calculate_diffs(fileList)
+
+plt.plot(diffs)
+plt.show()
 
 
 
