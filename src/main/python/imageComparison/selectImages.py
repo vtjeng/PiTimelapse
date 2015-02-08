@@ -5,13 +5,24 @@ import os
 import itertools
 import cProfile
 import matplotlib.pyplot as plt
+import pickle
+import re
 
 workingDirectory = "D:\Timelapse Project\Suite Lounge III - Working Copy"
-sampleSize = 2000
+# startingSample = 10000
+# sampleSize = 20
 
 os.chdir(workingDirectory)
 
-fileList = os.listdir(workingDirectory)[0:sampleSize]
+def isImageName(s):
+    # matches image names of the form "image (314159).jpg" with an arbitrary number of digits
+    imageFileNamePattern = re.compile("image \([0-9]+\)\.jpg")
+    return bool(imageFileNamePattern.match(s))
+
+fileList = filter(
+    isImageName,
+    os.listdir(workingDirectory)
+)
 
 # not used in this situation
 def pairwise(iterable):
@@ -41,7 +52,29 @@ def calculate_diffs(fileList):
 
 diffs = calculate_diffs(fileList)
 
+repoDirectory = os.path.join(
+    "C:\\Users",
+    "vince_000",
+    "Dropbox (Personal)",
+    "Documents",
+    "Programming",
+    "PiTimelapse",
+    )
+
+dumpFilePath = os.path.join(
+    "src",
+    "main",
+    "python",
+    "imageComparison",
+    "diffs.pickle"
+)
+
+dumpFile = open(os.path.join(repoDirectory,dumpFilePath), 'wb')
+pickle.dump(diffs, dumpFile)
+dumpFile.close()
+
 plt.plot(diffs)
+plt.axhline(y=0.0035,xmin=0,xmax=sampleSize,c="blue",linewidth=0.5,zorder=0)
 plt.show()
 
 
