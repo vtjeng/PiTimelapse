@@ -6,8 +6,7 @@ DELAY=55
 # Note: The total time interval between images is 
 # approximately $DELAY+5 seconds, since the camera module 
 # takes approximately 5 seconds to calibrate i
-ISUPLOAD=0
-while getopts “i:d:u:” OPTION
+while getopts “i:d:” OPTION
 do
      case $OPTION in
          i)
@@ -16,15 +15,10 @@ do
          d)
              DELAY=$OPTARG
              ;;
-         u)
-             ISUPLOAD=$OPTARG
-             ;;	
      esac
 done
 
 PROJECTDIR=/home/pi/techxtimelapse
-# IMAGEDIR=imagesCONTINUOUS
-# /home/pi/Dropbox-Uploader/dropbox_uploader.sh mkdir $IMAGEDIR
 # mkdir $PROJECTDIR/$IMAGEDIR
 
 # As of 13 Dec 2013,
@@ -37,12 +31,6 @@ PROJECTDIR=/home/pi/techxtimelapse
 while true;
 do
 	filename=$(date +"%Y%m%d_%H%M-%S").jpg
-	# raspistill --width 1280 --height 960 --quality 100 --timeout 5000 --encoding jpg -sh 0 -co 0 -br 50 -sa 0 -ev 0 --exposure off --awb off --ISO 100 --ev 10 --metering matrix --nopreview --output $PROJECTDIR/$IMAGEDIR/$filename
         raspistill --metering matrix --nopreview --output $PROJECTDIR/$IMAGEDIR/$filename
-	
-	if [ $ISUPLOAD = 1 ]; then
-		/home/pi/Dropbox-Uploader/dropbox_uploader.sh upload $PROJECTDIR/$IMAGEDIR/$filename $IMAGEDIR
-	fi
-
 	sleep $DELAY
 done
