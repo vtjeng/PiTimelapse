@@ -3,6 +3,9 @@
 
 IMAGEDIR=imagesCONTINUOUS
 DELAY=55
+# Note: The total time interval between images is 
+# approximately $DELAY+5 seconds, since the camera module 
+# takes approximately 5 seconds to calibrate i
 ISUPLOAD=0
 while getopts “i:d:u:” OPTION
 do
