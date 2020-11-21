@@ -1,7 +1,10 @@
 #!/bin/bash
 # Timelapse controller for Raspberry Pi
 
-IMAGEDIR=imagesCONTINUOUS
+# directory containing this script: https://stackoverflow.com/a/246128/1404966
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+IMAGEDIR="images"
 DELAY=54
 ISUPLOAD=0
 # Note: The total time interval between images is 
@@ -22,9 +25,11 @@ do
      esac
 done
 
-PROJECTDIR=/home/pi/techxtimelapse
-mkdir -p "$PROJECTDIR/$IMAGEDIR"
-# # /home/pi/Dropbox-Uploader/dropbox_uploader.sh mkdir "$IMAGEDIR"
+DROPBOX_UPLOADER_SCRIPT="$DIR/Dropbox-Uploader/dropbox_uploader.sh"
+
+mkdir -p "$DIR/$IMAGEDIR"
+## TODO (vtjeng): This is necessary to do the first time. Perhaps the script's mkdir has a -p flag?
+# "$DROPBOX_UPLOADER_SCRIPT" mkdir "$IMAGEDIR"
 
 # As of 13 Dec 2013,
 # -sh, -co, -sa range from -100 to 100. Default at 0
@@ -35,11 +40,13 @@ mkdir -p "$PROJECTDIR/$IMAGEDIR"
 
 while true;
 do
-	filename=$(date +"%Y%m%d_%H%M-%S").jpg
-    raspistill --metering matrix --nopreview --output "$PROJECTDIR/$IMAGEDIR/$filename"
+	FILENAME=$(date +"%Y%m%d_%H%M-%S").jpg
+    OUTPUT_PATH="$DIR/$IMAGEDIR/$FILENAME"
+    raspistill --metering matrix --nopreview --output "$OUTPUT_PATH"
 
-    if [ $ISUPLOAD = 1 ]; then
-		/home/pi/Dropbox-Uploader/dropbox_uploader.sh upload $PROJECTDIR/$IMAGEDIR/$filename $IMAGEDIR
+    if [[ $ISUPLOAD == 1 ]]; then
+        # TODO (vtjeng): make this a proper flag
+		"$DROPBOX_UPLOADER_SCRIPT" upload "$OUTPUT_PATH" "$IMAGEDIR"
 	fi
 
 	sleep "$DELAY"
