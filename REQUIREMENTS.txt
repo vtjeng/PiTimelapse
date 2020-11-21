@@ -1,0 +1,5 @@
+click>=7.1
+matplotlib>=3.3
+numpy>=1.19
+opencv-python>=4.4
+tqdm>=4.53

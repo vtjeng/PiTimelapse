@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ### BEGIN INIT INFO
 # Provides:		ipmailer.py
@@ -12,32 +12,32 @@
 
 import subprocess
 import smtplib
-import socket
 from email.mime.text import MIMEText
 import datetime
-# Change to your own account information
+
+# [Nov 21, 2020]: This script is no longer used.
 
 ### ENTER OWN INFORMATION HERE
-to = 
-gmail_user = 
-gmail_password = 
+to = None
+gmail_user = None
+gmail_password = None
 
-smtpserver = smtplib.SMTP('smtp.gmail.com', 587)
+smtpserver = smtplib.SMTP("smtp.gmail.com", 587)
 smtpserver.ehlo()
 smtpserver.starttls()
 smtpserver.ehlo
 smtpserver.login(gmail_user, gmail_password)
 today = datetime.date.today()
 # Very Linux Specific
-arg='ip route list'
-p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
+arg = "ip route list"
+p = subprocess.Popen(arg, shell=True, stdout=subprocess.PIPE)
 data = p.communicate()
 split_data = data[0].split()
-ipaddr = split_data[split_data.index('src')+1]
-my_ip = 'Your ip is %s' %  ipaddr
+ipaddr = split_data[split_data.index("src") + 1]
+my_ip = "Your ip is %s" % ipaddr
 msg = MIMEText(my_ip)
-msg['Subject'] = 'IP For RaspberryPi on %s' % today.strftime('%b %d %Y')
-msg['From'] = gmail_user
-msg['To'] = to
+msg["Subject"] = "IP For RaspberryPi on %s" % today.strftime("%b %d %Y")
+msg["From"] = gmail_user
+msg["To"] = to
 smtpserver.sendmail(gmail_user, [to], msg.as_string())
 smtpserver.quit()

@@ -2,11 +2,12 @@
 # Timelapse controller for Raspberry Pi
 
 IMAGEDIR=imagesCONTINUOUS
-DELAY=55
+DELAY=54
+ISUPLOAD=0
 # Note: The total time interval between images is 
 # approximately $DELAY+5 seconds, since the camera module 
 # takes approximately 5 seconds to calibrate i
-while getopts “i:d:” OPTION
+while getopts "i:d:u:" OPTION
 do
      case $OPTION in
          i)
@@ -15,11 +16,15 @@ do
          d)
              DELAY=$OPTARG
              ;;
+         u)
+             ISUPLOAD=$OPTARG
+             ;;	
      esac
 done
 
 PROJECTDIR=/home/pi/techxtimelapse
-# mkdir $PROJECTDIR/$IMAGEDIR
+mkdir -p "$PROJECTDIR/$IMAGEDIR"
+# # /home/pi/Dropbox-Uploader/dropbox_uploader.sh mkdir "$IMAGEDIR"
 
 # As of 13 Dec 2013,
 # -sh, -co, -sa range from -100 to 100. Default at 0
@@ -31,6 +36,11 @@ PROJECTDIR=/home/pi/techxtimelapse
 while true;
 do
 	filename=$(date +"%Y%m%d_%H%M-%S").jpg
-        raspistill --metering matrix --nopreview --output $PROJECTDIR/$IMAGEDIR/$filename
-	sleep $DELAY
+    raspistill --metering matrix --nopreview --output "$PROJECTDIR/$IMAGEDIR/$filename"
+
+    if [ $ISUPLOAD = 1 ]; then
+		/home/pi/Dropbox-Uploader/dropbox_uploader.sh upload $PROJECTDIR/$IMAGEDIR/$filename $IMAGEDIR
+	fi
+
+	sleep "$DELAY"
 done

@@ -1,0 +1,2 @@
+# runs script once on reboot
+@reboot /PATH/TO/SCRIPT/rtlC -d 24 &
